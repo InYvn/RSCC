@@ -1,0 +1,118 @@
+relative_path,info_score,block,allocate_token
+example\example.cpp,101,"// 这是一个C++示例文件
+
+/*
+多行注释：
+这个类表示一个简单的计算器
+*/
+",3
+example\example.cpp,105,"class Calculator {
+public:
+    Calculator() {}
+    ~Calculator() {}
+
+    // 加法函数
+    int add(int a, int b) {
+        return a + b;
+    }
+",3
+example\example.cpp,75,"    // 减法函数
+    int subtract(int a, int b) {
+        return a - b;
+    }
+",2
+example\example.cpp,117,"// 主函数
+int main() {
+    Calculator calc;
+    int sum = calc.add(5, 3);
+    int difference = calc.subtract(10, 4);
+
+    return 0;
+}
+",3
+example\example.cpp,96,"// 另一个示例函数
+void printMessage() {
+    std::cout << ""Hello, C++!"" << std::endl;
+}",2
+example\example.java,28,"/**
+ * 示例类
+ */
+",1
+example\example.java,144,"public class Example {
+    /**
+     * 加法方法
+     * @param a1 第一个数
+     * @param b 第二个数
+     * @return 两数之和
+     */
+    public int add(int a1, int b) {
+        return a + b;
+    }
+",3
+example\example.java,97,"    public String greet(String name) {
+        System.out.println(""Hello, "" + name);
+        return ""Greetings"";
+    }
+",2
+example\test\example.js,204,"// 这是一个JavaScript示例文件
+/*
+多行注释：
+这个类表示一个简单的计算器
+*/
+class Calculator {
+    constructor() {
+        this.result = 0;
+    }
+
+    add(a, b) {
+        return a + b;
+    }
+
+    subtract(a, b) {
+        return a - b;
+    }
+}",3
+example\test\example.js,103,"    // 加法方法
+    // 减法方法
+// 箭头函数示例
+const multiply = (a, b) => {
+    return a * b;
+};",3
+example\test\example.js,77,"// 模块导出示例
+module.exports = {
+    Calculator,
+    multiply
+};",2
+example\test\example.js,157,"// 主函数示例
+function main() {
+    const calc = new Calculator();
+    const sum = calc.add(5, 3);
+    const product = multiply(4, 5);
+
+    console.log(`Sum: ${sum}, Product: ${product}`);
+}",3
+example\test\example.js,48,// 立即执行函数表达式 (IIFE),1
+example\test\example.py,30,"""""""
+模块注释
+""""""
+
+",1
+example\test\example.py,61,"def add(a, b):
+    """"""
+    加法函数
+    """"""
+
+    return a + b
+
+",2
+example\test\example.py,22,"class Person:
+",1
+example\test\example.py,51,"    def __init__(self, name):
+        self.name = name
+
+",2
+example\test\example.py,60,"    def greet(self):
+        print(f""Hello, {self.name}!"")
+
+",2
+example\test\example.py,14,x = 42,1
