@@ -1,4 +1,4 @@
-from compressor.support_compression_LLM import compress_context
+from compressor.support_compression_LLM import compress_context,initialize_model
 import csv
 
 # splitter_map -> rule_based -> code_compressor
@@ -31,6 +31,7 @@ def read_from_csv(input_file):
 if __name__ == "__main__":
     input_file = "./temp/ruled_output.csv"
     output_file = "./temp/compressed_output.csv"
-    code_compressor(input_file, output_file)
+    tokenizer, model = initialize_model()
+    code_compressor(input_file, output_file, tokenizer, model)
     print(f"处理结果已写入文件: {output_file}")
     read_from_csv(output_file)
