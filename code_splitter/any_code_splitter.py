@@ -11,7 +11,6 @@ def parse_file(file_path):
     # 获取文件扩展名
     _, ext = os.path.splitext(file_path)
 
-    # 根据扩展名选择解析器
     if ext == '.java':
         return split_java_blocks(file_path)
     elif ext == '.py':

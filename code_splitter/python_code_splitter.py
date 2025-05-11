@@ -91,9 +91,8 @@ def merge_comment_blocks(code_blocks):
     return merged_blocks
 
 
-# 示例用法
 if __name__ == "__main__":
-    file_path = "example.py"  # 替换为你的 Python 文件路径
+    file_path = "example.py"
     code_blocks = split_code_blocks(file_path)
     merged_blocks = merge_comment_blocks(code_blocks)
 

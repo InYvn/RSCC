@@ -7,7 +7,6 @@ class Agent:
 
     def observe(self, message):
         """观察环境信息"""
-        # print(f"[{self.role}] 观察到: {message}")
         self.memory.append(f"[{self.role}] 观察到: {message}")
 
     def think(self, prompt):

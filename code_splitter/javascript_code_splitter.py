@@ -90,7 +90,6 @@ def split_js_blocks(file_path):
             if current_block:
                 current_block.append(line)
 
-    # 如果还有未保存的块，保存它
     if current_block:
         blocks.append('\n'.join(current_block))
 
