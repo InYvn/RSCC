@@ -4,7 +4,7 @@ class Coder(Agent):
     def __init__(self, llm_model):
         super().__init__("开发人员", "开发人员", llm_model)
 
-    def develop_code(self, requirement, feedback=None):
+    def develop_code(self, requirement, soft_prompt, feedback=None):
         base_prompt = f"""
             你是一个开发人员。根据以下需求开发代码：
             {requirement}
@@ -15,4 +15,4 @@ class Coder(Agent):
         if feedback:
             base_prompt += f"\n请根据以下反馈进行改进：{feedback}"
 
-        return self.act(base_prompt)
+        return self.act(base_prompt, soft_prompt)

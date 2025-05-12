@@ -1,26 +1,12 @@
 from zhipuai import ZhipuAI
 import os
+from compressor.support_compression_LLM import generate_with_softprompt, initialize_model
 
 class LLMModel:
-    def __init__(self, model_name="glm-4-flash-250414", api_key=""):
-        self.model_name = model_name
-        self.api_key = api_key if api_key else os.getenv("ZHIPUAI_API_KEY")
-        if not self.api_key:
-            raise ValueError("API Key 未设置，请提供有效的 ZhipuAI API Key")
+    def __init__(self):
+        """初始化模型与分词器"""
+        self.tokenizer, self.model = initialize_model()
 
-        self.client = ZhipuAI(api_key=self.api_key)
-
-    def generate(self, prompt, system_prompt=""):
-        messages = []
-
-        if system_prompt:
-            messages.append({"role": "system", "content": system_prompt})
-
-        messages.append({"role": "user", "content": prompt})
-
-        response = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=messages
-        )
-
-        return response.choices[0].message.content.strip()
+    def generate_with_softprompt(self, prompt_text, soft_prompt):
+        """带软提示的生成"""
+        return generate_with_softprompt(self.tokenizer, self.model, prompt_text, soft_prompt)

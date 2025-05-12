@@ -13,7 +13,10 @@ def initialize_model():
     return tokenizer, model
 
 
-def compress_context(tokenizer, model, context_text):
+def compress_context(tokenizer, model, context_text, summary_length=50):
+    # 动态设置摘要长度
+    model.config.summary_length = summary_length
+
     """文本压缩向量生成"""
     context_tokens = tokenizer(
         context_text,

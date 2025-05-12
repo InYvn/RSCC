@@ -2,9 +2,21 @@ from LLM import LLMModel
 from role.tester import Tester
 from role.coder import Coder
 from role.reviewer import Reviewer
+from code_splitter.splitter_map import process_project_files
+from code_splitter.rule_based import rule_based
+from code_splitter.code_compressor import code_compressor
 
 def software_development_sop(requirement, max_retries=3):
-    llm = LLMModel(model_name="glm-4-flash")
+    # llm = LLMModel(model_name="glm-4-flash")
+    llm = LLMModel()
+    project_path = "./large_scale_project"
+    output_process_file = "./code_splitter/temp/output.csv"
+    output_ruled_file = "./code_splitter/temp/ruled_output.csv"
+    output_compressor_file = "./code_splitter/temp/compressed_output.csv"
+    process_project_files(project_path, output_process_file)
+    rule_based(output_process_file, output_ruled_file)
+    soft_prompt = code_compressor(output_ruled_file,output_compressor_file,llm.tokenizer,llm.model)
+
     developer = Coder(llm)
     tester = Tester(llm)
     reviewer = Reviewer(llm)
@@ -13,11 +25,11 @@ def software_development_sop(requirement, max_retries=3):
     feedback = ""
     while retry_count <= max_retries:
         # 1. 开发人员开发代码
-        code = developer.develop_code(requirement, feedback)
+        code = developer.develop_code(requirement, soft_prompt, feedback)
         print(f"\n开发人员生成的代码:\n{code}")
 
         # 2. 测试人员测试
-        test_result = tester.test_code(code, requirement)
+        test_result = tester.test_code(code, soft_prompt, requirement)
         print(f"\n测试人员结果: {test_result['status']}, 原因: {test_result['reason']}")
 
         if test_result["status"] != "采纳":
@@ -27,7 +39,7 @@ def software_development_sop(requirement, max_retries=3):
             continue
 
         # 3. Reviewer 审查
-        review_result = reviewer.review_code(code, requirement)
+        review_result = reviewer.review_code(code, soft_prompt, requirement)
         print(f"\nReviewer 结果: {review_result['status']}, 原因: {review_result['reason']}")
 
         if review_result["status"] != "采纳":

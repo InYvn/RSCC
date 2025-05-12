@@ -4,7 +4,7 @@ class Reviewer(Agent):
     def __init__(self, llm_model):
         super().__init__("Reviewer", "Reviewer", llm_model)
 
-    def review_code(self, code, requirement):
+    def review_code(self, code, soft_prompt, requirement):
         prompt = f"""
             你是一个代码审查员。根据以下需求和代码，检查代码质量、规范性和可读性：
             需求: {requirement}
@@ -16,7 +16,7 @@ class Reviewer(Agent):
             
             注意事项：审查结果使用（采纳/不通过）表示，请勿同时出现（采纳/不通过）。请按照输出格式完整输出。
         """
-        response = self.act(prompt)
+        response = self.act(prompt, soft_prompt)
 
         print(response)
         # 解析审查结果

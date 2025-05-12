@@ -4,7 +4,7 @@ class Tester(Agent):
     def __init__(self, llm_model):
         super().__init__("测试人员", "测试人员", llm_model)
 
-    def test_code(self, code, requirement):
+    def test_code(self, code, soft_prompt, requirement):
         prompt = f"""
             你是一个测试人员。根据以下需求和代码，生成测试用例并验证代码是否符合要求：
             需求: {requirement}
@@ -16,7 +16,7 @@ class Tester(Agent):
             
             注意事项：测试结果使用（采纳/不通过）表示，请勿同时出现（采纳/不通过）。请按照输出格式完整输出。
         """
-        response = self.act(prompt)
+        response = self.act(prompt, soft_prompt)
 
         print(response)
         # 解析测试结果

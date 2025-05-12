@@ -4,6 +4,7 @@ import csv
 # splitter_map -> rule_based -> code_compressor
 
 def code_compressor(input_file, output_file, tokenizer, model):
+    combined_soft_prompt = ""
     with open(input_file, mode='r', encoding='utf-8') as infile, open(output_file, mode='w', newline='',
                                                                       encoding='utf-8') as outfile:
         reader = csv.reader(infile, delimiter=',', quotechar='"')
@@ -13,10 +14,13 @@ def code_compressor(input_file, output_file, tokenizer, model):
         writer.writerow(["relative_path", "info_score", "block", "allocate_token", "soft_token"])
 
         for row in reader:
-            soft_prompt = compress_context(tokenizer, model, row[3])
+            soft_prompt = compress_context(tokenizer, model, row[2], row[3])
+            combined_soft_prompt += soft_prompt  # 拼接 soft_prompt
 
             # 将结果写入文件
             writer.writerow([row[0], row[1], row[2], row[3], soft_prompt])
+
+    return combined_soft_prompt
 
 
 
