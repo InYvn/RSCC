@@ -1,3 +1,0 @@
-# RSCC
-
-# test
