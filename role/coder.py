@@ -2,17 +2,17 @@ from base_agent import Agent
 
 class Coder(Agent):
     def __init__(self, llm_model):
-        super().__init__("开发人员", "开发人员", llm_model)
+        super().__init__("Developer", "Developer", llm_model)
 
     def develop_code(self, requirement, soft_prompt, feedback=None):
         base_prompt = f"""
-            你是一个开发人员。根据以下需求开发代码：
+            You are a developer. Develop code based on the following requirements:
             {requirement}
-            输出格式：
-            代码文件结构: ...
-            核心代码实现: ...
+            Output format:
+            Code file structure: ...
+            Core code implementation: ...
         """
         if feedback:
-            base_prompt += f"\n请根据以下反馈进行改进：{feedback}"
+            base_prompt += f"\nPlease make improvements based on the following feedback: {feedback}"
 
         return self.act(base_prompt, soft_prompt)

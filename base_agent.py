@@ -6,20 +6,20 @@ class Agent:
         self.memory = []
 
     def observe(self, message):
-        """观察环境信息"""
-        self.memory.append(f"[{self.role}] 观察到: {message}")
+        """Observe environmental information"""
+        self.memory.append(f"[{self.role}] Observed: {message}")
 
     def think(self, prompt, soft_prompt):
-        """调用 LLM 进行思考"""
+        """Invoke the LLM to think"""
         return self.llm.generate_with_softprompt(prompt, soft_prompt)
 
     def act(self, action_prompt, soft_prompt):
-        """执行动作（调用 LLM 并返回结果）"""
+        """Perform an action (invoke the LLM and return the result)"""
         response = self.think(action_prompt, soft_prompt)
-        self.observe(f"执行动作: {action_prompt}")
-        self.observe(f"响应: {response}")
+        self.observe(f"Performed action: {action_prompt}")
+        self.observe(f"Response: {response}")
         return response
 
     def get_memory(self):
-        """获取记忆"""
+        """Retrieve memory"""
         return "\n".join(self.memory)

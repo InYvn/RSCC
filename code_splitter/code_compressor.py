@@ -1,4 +1,4 @@
-from compressor.support_compression_LLM import compress_context,initialize_model
+from compressor.support_compression_LLM import compress_context, initialize_model
 import csv
 
 # splitter_map -> rule_based -> code_compressor
@@ -10,14 +10,14 @@ def code_compressor(input_file, output_file, tokenizer, model):
         reader = csv.reader(infile, delimiter=',', quotechar='"')
         writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-        # 写入表头
+        # Write the header
         writer.writerow(["relative_path", "info_score", "block", "allocate_token", "soft_token"])
 
         for row in reader:
             soft_prompt = compress_context(tokenizer, model, row[2], row[3])
-            combined_soft_prompt += soft_prompt  # 拼接 soft_prompt
+            combined_soft_prompt += soft_prompt  # Concatenate soft_prompt
 
-            # 将结果写入文件
+            # Write the result to the file
             writer.writerow([row[0], row[1], row[2], row[3], soft_prompt])
 
     return combined_soft_prompt
@@ -25,7 +25,7 @@ def code_compressor(input_file, output_file, tokenizer, model):
 
 
 def read_from_csv(input_file):
-    # 从 CSV 文件中读取数据
+    # Read data from the CSV file
     with open(input_file, mode='r', encoding='utf-8') as file:
         reader = csv.reader(file, delimiter=',', quotechar='"')
         for row in reader:
@@ -37,5 +37,5 @@ if __name__ == "__main__":
     output_file = "./temp/compressed_output.csv"
     tokenizer, model = initialize_model()
     code_compressor(input_file, output_file, tokenizer, model)
-    print(f"处理结果已写入文件: {output_file}")
+    print(f"Processing results have been written to the file: {output_file}")
     read_from_csv(output_file)

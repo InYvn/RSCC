@@ -1,10 +1,10 @@
 """
-模块注释
+Module comment
 """
 
 def add(a, b):
     """
-    加法函数
+    Addition function
     """
 
     return a + b

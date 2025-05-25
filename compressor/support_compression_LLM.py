@@ -4,7 +4,7 @@ from auto_compressor import LlamaAutoCompressorModel
 
 
 def initialize_model():
-    """初始化模型与分词器"""
+    """Initialize the model and tokenizer"""
     tokenizer = AutoTokenizer.from_pretrained("princeton-nlp/AutoCompressor-Llama-2-7b-6k")
     model = LlamaAutoCompressorModel.from_pretrained(
         "princeton-nlp/AutoCompressor-Llama-2-7b-6k",
@@ -14,10 +14,10 @@ def initialize_model():
 
 
 def compress_context(tokenizer, model, context_text, summary_length=50):
-    # 动态设置摘要长度
+    # Dynamically set the summary length
     model.config.summary_length = summary_length
 
-    """文本压缩向量生成"""
+    """Generate compressed vector for the text"""
     context_tokens = tokenizer(
         context_text,
         add_special_tokens=False,
@@ -32,7 +32,7 @@ def compress_context(tokenizer, model, context_text, summary_length=50):
 
 
 def generate_with_softprompt(tokenizer, model, prompt_text, softprompt):
-    """带软提示的生成"""
+    """Generate text with soft prompt"""
     prompt_tokens = tokenizer(
         prompt_text,
         add_special_tokens=False,
@@ -49,7 +49,7 @@ def generate_with_softprompt(tokenizer, model, prompt_text, softprompt):
 
 
 def generate_without_context(tokenizer, model, prompt_text):
-    """无上下文的基线生成"""
+    """Baseline generation without context"""
     prompt_tokens = tokenizer(
         prompt_text,
         add_special_tokens=False,

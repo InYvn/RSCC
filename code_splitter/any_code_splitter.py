@@ -8,7 +8,7 @@ from code_splitter.python_code_splitter import split_code_blocks
 
 
 def parse_file(file_path):
-    # 获取文件扩展名
+    # Get the file extension
     _, ext = os.path.splitext(file_path)
 
     if ext == '.java':
@@ -20,7 +20,7 @@ def parse_file(file_path):
     elif ext == '.js':
         return split_js_blocks(file_path)
     else:
-        raise ValueError(f"不支持的文件类型: {ext}")
+        raise ValueError(f"Unsupported file type: {ext}")
 
 
 if __name__ == "__main__":

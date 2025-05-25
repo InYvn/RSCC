@@ -4,32 +4,32 @@ from code_splitter.any_code_splitter import parse_file
 from calculate_info_score import calculate_info_score
 
 def process_project_files(project_path, output_file):
-    # 打开文件进行写入
+    # Open the file for writing
     with open(output_file, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(["relative_path", "info_score", "block"])  # 写入表头
+        writer.writerow(["relative_path", "info_score", "block"])  # Write the header
 
-        # 遍历目录及其子目录中的所有文件
+        # Traverse all files in the directory and its subdirectories
         for root, _, files in os.walk(project_path):
             for file in files:
                 file_path = os.path.join(root, file)
                 relative_path = os.path.relpath(file_path, project_path)
                 try:
-                    # 使用 parse_file 处理文件
+                    # Use parse_file to process the file
                     result = parse_file(file_path)
-                    # 计算信息分数并写入文件
+                    # Calculate the information score and write it to the file
                     for block in result:
                         info_score = calculate_info_score(block)
                         writer.writerow([relative_path, info_score, block])
                 except ValueError as e:
-                    # 跳过不支持的文件类型
-                    print(f"跳过文件 {relative_path}: {e}")
+                    # Skip unsupported file types
+                    print(f"Skipped file {relative_path}: {e}")
                 except Exception as e:
-                    # 捕获其他异常
-                    print(f"处理文件 {relative_path} 时出错: {e}")
+                    # Catch other exceptions
+                    print(f"Error processing file {relative_path}: {e}")
 
 def read_from_csv(input_file):
-    # 从 CSV 文件中读取数据
+    # Read data from the CSV file
     with open(input_file, mode='r', encoding='utf-8') as file:
         reader = csv.reader(file, delimiter=',', quotechar='"')
         for row in reader:
@@ -40,4 +40,3 @@ if __name__ == "__main__":
     output_file = "./temp/output.csv"
     process_project_files(project_path, output_file)
     read_from_csv(output_file)
-

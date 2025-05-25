@@ -1,37 +1,37 @@
-// 这是一个JavaScript示例文件
+// This is a JavaScript sample file
 
 /*
-多行注释：
-这个类表示一个简单的计算器
+Multiline comment:
+This class represents a simple calculator
 */
 class Calculator {
     constructor() {
         this.result = 0;
     }
 
-    // 加法方法
+    // Addition method
     add(a, b) {
         return a + b;
     }
 
-    // 减法方法
+    // Subtraction method
     subtract(a, b) {
         return a - b;
     }
 }
 
-// 箭头函数示例
+// Arrow function example
 const multiply = (a, b) => {
     return a * b;
 };
 
-// 模块导出示例
+// Module export example
 module.exports = {
     Calculator,
     multiply
 };
 
-// 主函数示例
+// Main function example
 function main() {
     const calc = new Calculator();
     const sum = calc.add(5, 3);
@@ -40,7 +40,7 @@ function main() {
     console.log(`Sum: ${sum}, Product: ${product}`);
 }
 
-// 立即执行函数表达式 (IIFE)
+// Immediately Invoked Function Expression (IIFE)
 (function() {
     console.log("This is an IIFE");
 })();

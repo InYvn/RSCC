@@ -1,14 +1,14 @@
 from SOP import software_development_sop
 
 if __name__ == "__main__":
-    user_requirement = "创建一个 2048 游戏的网页版应用"
+    user_requirement = "Create a web-based application for the 2048 game"
     result = software_development_sop(user_requirement)
 
     if result:
-        print("\n最终输出:")
-        print("代码:")
+        print("\nFinal Output:")
+        print("Code:")
         print(result["code"])
-        print("\n测试结果:")
+        print("\nTest Results:")
         print(result["test_result"])
-        print("\n审查结果:")
+        print("\nReview Results:")
         print(result["review_result"])

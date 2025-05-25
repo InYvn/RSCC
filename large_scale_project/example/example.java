@@ -1,12 +1,12 @@
 /**
- * 示例类
+ * Example class
  */
 public class Example {
     /**
-     * 加法方法
-     * @param a1 第一个数
-     * @param b 第二个数
-     * @return 两数之和
+     * Addition method
+     * @param a1 The first number
+     * @param b The second number
+     * @return The sum of the two numbers
      */
     public int add(int a1, int b) {
         return a + b;

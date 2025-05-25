@@ -14,16 +14,16 @@ from transformers.modeling_outputs import CausalLMOutputWithPast
 
 import os
 
-logger = logging.getLogger(__name__) # __name__ 表示当前模块的名称
+logger = logging.getLogger(__name__)
 
-PastKVType = Optional[Tuple[Tuple[torch.FloatTensor]]] # 表示一个可选的元组，元组中包含一个或多个 torch.FloatTensor 对象
+PastKVType = Optional[Tuple[Tuple[torch.FloatTensor]]]
 
 @dataclass
 class SummaryConfig:
-    """Keep track of token constitution of current input sequence 用于跟踪当前输入序列中与摘要相关的标记（token）的组成情况。"""
-    softprompt_length: int = 0 # 表示软提示的长度
-    past_key_values_softprompt_length: int = 0 # 存储在 past_key_values 中的软提示长度
-    summary_length: int = 0 # 表示摘要标记的长度
+    """Keep track of token constitution of current input sequence """
+    softprompt_length: int = 0
+    past_key_values_softprompt_length: int = 0
+    summary_length: int = 0
 
     def reset(self):
         self.softprompt_length = 0
@@ -32,26 +32,25 @@ class SummaryConfig:
 
 
 @dataclass
-class CausalACOutputWithPast(CausalLMOutputWithPast): # 用于扩展因果语言模型的输出结构。
+class CausalACOutputWithPast(CausalLMOutputWithPast):
     softprompt: Optional[torch.FloatTensor]= None
 
 
 class AutoCompressorMixin:
-    """Mixin class to turn a AutoModelForCausalLM into an AutoCompressor. Mixin类把一个AutoModelForCausalLM变成一个AutoCompressor。"""
+    """Mixin class to turn a AutoModelForCausalLM into an AutoCompressor. """
 
     def setup_autocompressor(self, config):
-        """Call this function in the subclass __init__ to initialize the autocompressor. Override for custom behaviour 在子类init中调用这个函数来初始化自动压缩器。覆盖自定义行为"""
-        assert hasattr(self.config, 'summary_length'), "Compressor requires a summary_length config parameter" # 检查 self.config 是否包含 summary_length 属性。
+        """Call this function in the subclass __init__ to initialize the autocompressor. Override for custom behaviour """
+        assert hasattr(self.config, 'summary_length'), "Compressor requires a summary_length config parameter"
 
-        self.summary_config = SummaryConfig()   # 创建一个 SummaryConfig 实例，用于跟踪摘要相关的配置信息（如摘要长度、软提示长度等）。
+        self.summary_config = SummaryConfig()
 
-        if config.summary_length > 0:   # 如果 config.summary_length 大于 0，则创建一个嵌入层 self.embed_summary。
-            self.embed_summary = nn.Embedding(config.summary_length, self.get_input_embeddings().embedding_dim) # 嵌入层的大小为摘要长度和输入嵌入维度。
-            # 初始化摘要嵌入权重
+        if config.summary_length > 0:
+            self.embed_summary = nn.Embedding(config.summary_length, self.get_input_embeddings().embedding_dim)
             input_embeds = self.get_input_embeddings()
             self.embed_summary.weight.data[:,:] = (
                 input_embeds.weight[config.eos_token_id]
-            ) # 将摘要嵌入的权重初始化为输入嵌入中 EOS 标记的权重。
+            )
 
     def forward_segment(
         self,
@@ -67,14 +66,12 @@ class AutoCompressorMixin:
         past_key_values_softprompt_length: int
     ):
 
-        # 获取批量大小和摘要长度
         bsz = segment_embeds.size(0)
         summary_length = summary_token_embeds.size(1)
         if past_key_values_softprompt_length > 0: # Softprompt should already be in past_key_values
             softprompt_length = 0
             segment_embeds = torch.cat([segment_embeds, summary_token_embeds], dim=1)
 
-            # 为 past_key_values 的软提示部分和摘要标记部分添加全 1 的注意力掩码。
             device, attn_dtype = segment_embeds.device, segment_attention_mask.dtype
             segment_attention_mask = torch.cat([
                 torch.ones(bsz, past_key_values_softprompt_length, device=device, dtype=attn_dtype),
@@ -92,19 +89,16 @@ class AutoCompressorMixin:
                 torch.ones(bsz, summary_length, device=device, dtype=attn_dtype)
             ], dim=1)
 
-        # 处理输入片段并通过模型生成输出
         def decoder(segment_embeds,
                     segment_attention_mask,
                     segment_past_key_values,
                     softprompt_length,
                     past_key_values_softprompt_length,
                     summary_length):
-            # 更新 summary_config 中的软提示长度、过去键值对中的软提示长度和摘要长度。
             self.summary_config.softprompt_length = softprompt_length
             self.summary_config.past_key_values_softprompt_length = past_key_values_softprompt_length
             self.summary_config.summary_length = summary_length
 
-            # 将输入传递给模型，返回模型的输出。
             return self.model(
                 inputs_embeds=segment_embeds,
                 attention_mask=segment_attention_mask,
@@ -113,7 +107,6 @@ class AutoCompressorMixin:
                 output_attentions=output_attentions,
                 output_hidden_states=output_hidden_states,
                 return_dict=True,)
-        # 如果启用梯度检查点，decoder 的中间计算不会被存储，而是会在反向传播时重新计算，从而节省内存。
         if segment_gradient_checkpointing:
             outputs = torch.utils.checkpoint.checkpoint(
                 decoder, segment_embeds, segment_attention_mask, past_key_values,
@@ -123,13 +116,11 @@ class AutoCompressorMixin:
             outputs = decoder(
                 segment_embeds, segment_attention_mask, past_key_values,
                 softprompt_length, past_key_values_softprompt_length, summary_length)
-        # 处理模型输出
         total_length = outputs.last_hidden_state.size(1)
         segment_last_hiddens = (
             outputs.last_hidden_state[:, softprompt_length:total_length - summary_length]
         )
         new_softprompt = outputs.last_hidden_state[:, total_length - summary_length:]
-        # 返回模型的完整输出（outputs）、片段的隐藏状态（segment_last_hiddens）以及新的软提示（new_softprompt）
         return outputs, segment_last_hiddens, new_softprompt
 
     def get_past_key_values_len(self, past_key_values):

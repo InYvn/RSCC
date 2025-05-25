@@ -32,7 +32,7 @@ def software_development_sop(requirement, max_retries=3):
         test_result = tester.test_code(code, soft_prompt, requirement)
         print(f"\n测试人员结果: {test_result['status']}, 原因: {test_result['reason']}")
 
-        if test_result["status"] != "采纳":
+        if test_result["status"] != "accept":
             retry_count += 1
             feedback = test_result["reason"]
             print(f"测试未通过，第 {retry_count} 次重试，反馈: {feedback}")
@@ -42,7 +42,7 @@ def software_development_sop(requirement, max_retries=3):
         review_result = reviewer.review_code(code, soft_prompt, requirement)
         print(f"\nReviewer 结果: {review_result['status']}, 原因: {review_result['reason']}")
 
-        if review_result["status"] != "采纳":
+        if review_result["status"] != "accept":
             retry_count += 1
             feedback = review_result["reason"]
             print(f"审查未通过，第 {retry_count} 次重试，反馈: {feedback}")

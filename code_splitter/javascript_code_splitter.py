@@ -3,7 +3,7 @@ import re
 
 def split_js_blocks(file_path):
     """
-    从JavaScript文件中分割代码块，按函数、类或模块分块，并将注释合并到相关代码块中
+    Split code blocks from a JavaScript file, dividing by functions, classes, or modules, and merging comments into the related code blocks.
     """
     with open(file_path, 'r', encoding='utf-8') as file:
         content = file.read()
@@ -13,13 +13,13 @@ def split_js_blocks(file_path):
     inside_block = False
     block_level = 0
 
-    # 用于检测函数和类声明的正则表达式
+    # Regular expressions for detecting function and class declarations
     function_pattern = re.compile(r'^\s*(async\s+)?function\s+[\w$]+\s*\([^)]*\)\s*(\{)?')
     arrow_function_pattern = re.compile(r'^\s*const\s+\w+\s*=\s*(async\s+)?\([^)]*\)\s*=>\s*(\{)')
     class_pattern = re.compile(r'^\s*(class|interface)\s+\w+\s*(extends\s+\w+)?\s*(implements\s+[^\{]+)?\s*(\{)?')
     module_pattern = re.compile(r'^\s*(module\.exports\s*=\s*)?{')
 
-    # 用于检测注释的正则表达式
+    # Regular expressions for detecting comments
     single_line_comment = re.compile(r'//')
     multi_line_comment_start = re.compile(r'/\*')
     multi_line_comment_end = re.compile(r'\*/')
@@ -32,7 +32,7 @@ def split_js_blocks(file_path):
     for line in lines:
         stripped_line = line.strip()
 
-        # 处理多行注释
+        # Handle multi-line comments
         if multi_line_comment_start.search(stripped_line) and not inside_comment_block:
             inside_comment_block = True
 
@@ -42,22 +42,22 @@ def split_js_blocks(file_path):
                 inside_comment_block = False
             continue
 
-        # 处理单行注释
+        # Handle single-line comments
         if single_line_comment.search(stripped_line):
             comment_buffer.append(line)
             continue
 
-        # 检查是否有新的函数、类或模块开始
+        # Check if a new function, class, or module starts
         if (function_pattern.match(stripped_line) or
                 arrow_function_pattern.match(stripped_line) or
                 class_pattern.match(stripped_line) or
                 module_pattern.match(stripped_line)):
 
-            # 如果有之前的块，保存它
+            # Save the previous block if it exists
             if current_block:
                 blocks.append('\n'.join(current_block))
 
-            # 如果有注释缓冲区，将其合并到当前块
+            # Merge the comment buffer into the current block if it exists
             if comment_buffer:
                 current_block = comment_buffer + [line]
                 comment_buffer = []
@@ -68,32 +68,32 @@ def split_js_blocks(file_path):
             block_level = 1
             continue
 
-        # 检查是否有缩进的代码行（属于当前块）
+        # Check for indented lines (belonging to the current block)
         if inside_block and stripped_line and not re.match(r'^\s*$', stripped_line):
             current_block.append(line)
 
-            # 检查是否有左大括号，增加嵌套级别
+            # Check for opening braces, increase nesting level
             if '{' in stripped_line:
                 block_level += stripped_line.count('{')
 
-            # 检查是否有右大括号，减少嵌套级别
+            # Check for closing braces, decrease nesting level
             if '}' in stripped_line:
                 block_level -= stripped_line.count('}')
 
-            # 如果嵌套级别为0，表示当前块结束
+            # If nesting level is 0, the current block ends
             if block_level == 0:
                 inside_block = False
                 blocks.append('\n'.join(current_block))
                 current_block = []
         elif not stripped_line:
-            # 如果是空行，添加到当前块中
+            # If it's an empty line, add it to the current block
             if current_block:
                 current_block.append(line)
 
     if current_block:
         blocks.append('\n'.join(current_block))
 
-    # 如果有剩余的注释缓冲区，将其作为单独的块
+    # If there is a remaining comment buffer, add it as a separate block
     if comment_buffer:
         blocks.append('\n'.join(comment_buffer))
 
@@ -108,4 +108,3 @@ if __name__ == "__main__":
         print(f"Block {i + 1}:")
         print(block)
         print("-" * 50)
-

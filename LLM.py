@@ -4,9 +4,9 @@ from compressor.support_compression_LLM import generate_with_softprompt, initial
 
 class LLMModel:
     def __init__(self):
-        """初始化模型与分词器"""
+        """Initialize the model and tokenizer"""
         self.tokenizer, self.model = initialize_model()
 
     def generate_with_softprompt(self, prompt_text, soft_prompt):
-        """带软提示的生成"""
+        """Generate text with a soft prompt"""
         return generate_with_softprompt(self.tokenizer, self.model, prompt_text, soft_prompt)

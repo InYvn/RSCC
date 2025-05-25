@@ -1,26 +1,26 @@
-// 这是一个C++示例文件
+// This is a C++ sample file
 
 /*
-多行注释：
-这个类表示一个简单的计算器
+Multiline comment:
+This class represents a simple calculator
 */
 class Calculator {
 public:
     Calculator() {}
     ~Calculator() {}
 
-    // 加法函数
+    // Addition function
     int add(int a, int b) {
         return a + b;
     }
 
-    // 减法函数
+    // Subtraction function
     int subtract(int a, int b) {
         return a - b;
     }
 };
 
-// 主函数
+// Main function
 int main() {
     Calculator calc;
     int sum = calc.add(5, 3);
@@ -29,7 +29,7 @@ int main() {
     return 0;
 }
 
-// 另一个示例函数
+// Another example function
 void printMessage() {
     std::cout << "Hello, C++!" << std::endl;
 }

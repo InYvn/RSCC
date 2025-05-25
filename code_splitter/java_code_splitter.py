@@ -3,7 +3,7 @@ import re
 
 def split_java_blocks(file_path):
     """
-    从Java文件中分割代码块，按类和方法分块，同时保留注释
+    Split code blocks from a Java file, dividing by classes and methods while preserving comments.
     """
     with open(file_path, 'r', encoding='utf-8') as file:
         lines = file.readlines()
@@ -13,13 +13,13 @@ def split_java_blocks(file_path):
     inside_block = False
     block_level = 0
 
-    # 用于检测类和方法声明的正则表达式
+    # Regular expressions for detecting class and method declarations
     class_pattern = re.compile(r'^\s*(public|private|protected|static|final|abstract|\s)*class\s+(\w+)')
     method_pattern = re.compile(
         r'^\s*((public|private|protected|static|final|abstract|synchronized|native|strictfp|\s)+)?(\w+|\w+<.*?>|\w+\[\])\s+(\w+\s*\(*.*?\)*)')
     interface_pattern = re.compile(r'^\s*(public|private|protected|static|final|abstract|\s)*interface\s+(\w+)')
 
-    # 用于检测注释的正则表达式
+    # Regular expressions for detecting comments
     single_line_comment = re.compile(r'//')
     multi_line_comment_start = re.compile(r'/\*')
     multi_line_comment_end = re.compile(r'\*/')
@@ -29,7 +29,7 @@ def split_java_blocks(file_path):
     for line in lines:
         stripped_line = line.strip()
 
-        # 处理多行注释
+        # Handle multi-line comments
         if multi_line_comment_start.search(stripped_line) and not inside_comment_block:
             inside_comment_block = True
 
@@ -39,14 +39,14 @@ def split_java_blocks(file_path):
                 inside_comment_block = False
             continue
 
-        # 处理单行注释
+        # Handle single-line comments
         if single_line_comment.search(stripped_line):
             current_block.append(line)
             continue
 
-        # 检查是否有新的类或方法开始
+        # Check if a new class or method starts
         if class_pattern.match(stripped_line) or interface_pattern.match(stripped_line):
-            # 如果有之前的块，保存它
+            # Save the previous block if it exists
             if current_block:
                 blocks.append(''.join(current_block))
 
@@ -55,32 +55,32 @@ def split_java_blocks(file_path):
             block_level = 1
             continue
 
-        # 检查是否有新的方法开始
+        # Check if a new method starts
         if method_pattern.match(stripped_line):
             current_block.append(line)
             inside_block = True
             block_level = 1
             continue
 
-        # 检查是否有缩进的代码行（属于当前块）
+        # Check for indented lines (belonging to the current block)
         if inside_block and stripped_line and not re.match(r'^\s*$', stripped_line):
             current_block.append(line)
 
-            # 检查是否有左大括号，增加嵌套级别
+            # Check for opening braces, increase nesting level
             if '{' in stripped_line:
                 block_level += stripped_line.count('{')
 
-            # 检查是否有右大括号，减少嵌套级别
+            # Check for closing braces, decrease nesting level
             if '}' in stripped_line:
                 block_level -= stripped_line.count('}')
 
-            # 如果嵌套级别为0，表示当前块结束
+            # If nesting level is 0, the current block ends
             if block_level == 0:
                 inside_block = False
                 blocks.append(''.join(current_block))
                 current_block = []
         elif not stripped_line:
-            # 如果是空行，添加到当前块中
+            # If it's an empty line, add it to the current block
             if current_block:
                 current_block.append(line)
 
